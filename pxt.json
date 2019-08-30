@@ -4,8 +4,7 @@
     "description": "",
     "dependencies": {
         "core": "*",
-        "radio": "*",
-        "microbit-moter-extension": "workspace:d3b9c5e9-34fd-42d8-87a7-c56ee2449ec0"
+        "radio": "*"
     },
     "files": [
         "README.md",
