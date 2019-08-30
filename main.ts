@@ -1,6 +1,6 @@
 namespace comment {
 
-    export function notaction(text: string): void {
+    export function noaction(text: string): void {
            
     }
 }
