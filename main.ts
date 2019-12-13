@@ -5,9 +5,6 @@ let MQTTMessageRetrieveState = 0; //Track MQTT message retrieval state.
 
 let MQTTMessage = "" //Used to store the retrieved message
 
-let pingActive = false;
-let lastPing = 0;
-
 function clearSerialBuffer() {
     //   serial.clearRxBuffer()
 }
@@ -206,7 +203,7 @@ function ThingSpeakResponse() {
  */
 //% weight=100 color=#FF2F92 icon=""
 //% advanced=true
-namespace CyberDragon {
+namespace WiFi_BLE {
 
     //% groups=" 'Connect' weight=100, 'IFTTT', 'Thingspeak','MQTT', 'Bluetooth Click Board' weight=50, 'RFID Click Board', 'NFC Click Board' 'LoRaWAN Click, '3G Click Board' "
 let MQTTMessage = ""
@@ -921,43 +918,32 @@ let UARTRawData  = ""
 
 
 
-  // -------------- 3. Cloud ----------------
+    // -------------- 3. Cloud ----------------
     //% blockId=pingAdafruitMQTT
-    //% block="Ping Adafruit MQTT every %pingInterval seconds on click%clickBoardNum"
+    //% block="Ping Adafruit MQTT on click%clickBoardNum"
     //% group="MQTT"
     //% weight=70   
     //% blockGap=7  
-    //% pingInterval.min=1 pingInterval.max=59
-    //% advanced=false
-    export function pingAdafruitMQTT(pingInterval: number, clickBoardNum: clickBoardID) 
-    {
-        if(pingActive == false)
-        {
-            lastPing = input.runningTime();
-            let controlPacket = pins.createBuffer(1);
-            controlPacket.setNumber(NumberFormat.UInt8LE,0,0xC0); //Subscribe Control Packet header
-            let remainingLength = pins.createBuffer(1) //size of remaining Length packet
-            remainingLength.setNumber(NumberFormat.UInt8LE,0,0x00); //Remaining Length = 0 
-    
+    //% advanced=true
+    export function pingAdafruitMQTT(clickBoardNum: clickBoardID) {
+
+        let controlPacket = pins.createBuffer(1);
+        controlPacket.setNumber(NumberFormat.UInt8LE,0,0xC0); //Subscribe Control Packet header
+        let remainingLength = pins.createBuffer(1) //size of remaining Length packet
+        remainingLength.setNumber(NumberFormat.UInt8LE,0,0x00); //Remaining Length = 0 
+
             bBoard.sendString("AT+CIPSEND=0,2\r\n",clickBoardNum)
             response = WiFiResponse("OK", false, defaultWiFiTimeoutmS,clickBoardNum); //Wait for the response "OK"
             bBoard.sendBuffer(controlPacket,clickBoardNum);
             bBoard.sendBuffer(remainingLength,clickBoardNum);
             response = WiFiResponse("OK", false, defaultWiFiTimeoutmS,clickBoardNum); //Wait for the response "OK"
-
-            pingActive = true;
-        }
-        else //If a ping has been sent
-        {
-            if ((input.runningTime() - lastPing) > pingInterval*1000) 
-            {
-                pingActive = false;
-            }
-        }
-        
-    
             
-        
-    }
+        }
+
+    
+
+
+
+
 
 }
